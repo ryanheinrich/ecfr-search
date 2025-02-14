@@ -22,14 +22,8 @@
         <!-- Search Form -->
         <form method="GET" action="{{ url_for('search_ecfr') }}">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-10">
                     <input type="text" name="query" class="form-control mb-2" placeholder="Search keyword">
-                </div>
-                <div class="col-md-3">
-                    <input type="text" name="title" class="form-control mb-2" placeholder="Title (e.g., 21)">
-                </div>
-                <div class="col-md-3">
-                    <input type="text" name="part" class="form-control mb-2" placeholder="Part (e.g., 1300)">
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100">Search</button>
