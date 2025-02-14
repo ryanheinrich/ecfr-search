@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eCFR Advanced Search</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .ended-result {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">eCFR Search</h1>
+
+        <!-- Search Form -->
+        <form method="GET" action="{{ url_for('search_ecfr') }}">
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" name="query" class="form-control mb-2" placeholder="Search keyword">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="title" class="form-control mb-2" placeholder="Title (e.g., 21)">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="part" class="form-control mb-2" placeholder="Part (e.g., 1300)">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+            </div>
+        </form>
+
+        {% if metadata or tone_analysis %}
+            <div class="row mt-4">
+                {% if metadata %}
+                    <div class="col-md-6">
+                        <h3>Metadata</h3>
+                        <div class="bg-white p-3 border rounded">
+                            <p><strong>Total Results:</strong> {{ metadata.total_results }}</p>
+                            <p><strong>Number of Active:</strong> {{ metadata.active_count }}</p>
+                            <p><strong>Number of Ended:</strong> {{ metadata.ended_count }}</p>
+                            <p><strong>Number of Pages:</strong> {{ metadata.num_pages }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if tone_analysis %}
+                    <div class="col-md-6">
+                        <h3>Tone Analysis</h3>
+                        <div class="bg-white p-3 border rounded">
+                            <p><strong>Strict:</strong> {{ tone_analysis.strict }}</p>
+                            <p><strong>Neutral:</strong> {{ tone_analysis.neutral }}</p>
+                            <p><strong>Permissive:</strong> {{ tone_analysis.permissive }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if title_stats or part_stats %}
+            <div class="row mt-4">
+                {% if title_stats %}
+                    <div class="col-md-6">
+                        <h3>Title Statistics</h3>
+                        <div class="bg-white p-3 border rounded">
+                            <ul>
+                                {% for title, count in title_stats.items() %}
+                                    <li><strong>Title {{ title }}:</strong> {{ count }} entries</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if part_stats %}
+                    <div class="col-md-6">
+                        <h3>Part Statistics</h3>
+                        <div class="bg-white p-3 border rounded">
+                            <ul>
+                                {% for part, count in part_stats.items() %}
+                                    <li><strong>Part {{ part }}:</strong> {{ count }} entries</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if results %}
+            <h3 class="mt-4">Results</h3>
+            <div class="bg-white p-3 border rounded">
+                {% for result in results %}
+                    <div class="mb-3 p-2 border-bottom {% if result.ends_on %}ended-result{% endif %}">
+                        <h5>
+                            <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapse{{ loop.index }}" role="button" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                                <strong>{{ result.headings.title }}</strong>
+                                <small class="text-muted">
+                                    (Starts on: {{ result.starts_on }} | Ends on: {{ result.ends_on or "N/A" }} | 
+                                    {% if result.ends_on %}Ended{% else %}Active{% endif %})
+                                    [{{ result.tone }}]
+                                </small>
+                            </a>
+                        </h5>
+                        <p><strong>Subtitle:</strong> {{ result.headings.subtitle }}</p>
+                        <p><strong>Subject Group:</strong> {{ result.headings.subject_group }}</p>
+                        <div class="collapse" id="collapse{{ loop.index }}">
+                            <p>
+                                <strong>{{ result.hierarchy_headings.section }}:</strong> 
+                                {{ result.headings.section }}
+                            </p>
+                            <p>
+                                <em>Part:</em> {{ result.hierarchy_headings.part }} | 
+                                <em>Subpart:</em> {{ result.hierarchy_headings.subpart or "N/A" }}
+                            </p>
+                            <p>{{ result.full_text_excerpt | safe }}</p>
+                            <a href="https://www.ecfr.gov/current/title-{{ result.hierarchy.title }}/part-{{ result.hierarchy.part }}#{{ result.hierarchy.section }}" 
+                            target="_blank" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            {% if error %}
+                <p class="text-danger">{{ error }}</p>
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
