@@ -1,6 +1,9 @@
 # eCFR Search
 
-eCFR Search is a web application designed to facilitate advanced searches within the Electronic Code of Federal Regulations (eCFR). This application allows users to search for specific keywords, titles, and parts within the eCFR, providing detailed results and metadata.
+eCFR Search is a web application designed to facilitate advanced searches within the Electronic Code of Federal Regulations (eCFR). 
+The original intention was to have several dynamic pages and cool flashy dashboards, but for the sake of brevity, this was left out.
+
+This application allows users to search for specific keywords, titles, and parts within the eCFR, providing detailed results and metadata.
 
 ## Features
 
