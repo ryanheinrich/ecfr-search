@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# ntlk_data
+nltk_data/
+ntlk_data/*
+ecfr_response_debug.json
+
 # C extensions
 *.so
 
